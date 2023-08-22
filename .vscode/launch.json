@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/geoff/Documents/GitHub/traintrackr/patterns",
-      "program": "c:/Users/geoff/Documents/GitHub/traintrackr/patterns/build/Debug/outDebug",
+      "cwd": "c:/Users/geoff/Documents/GitHub/traintrackr/fullon",
+      "program": "c:/Users/geoff/Documents/GitHub/traintrackr/fullon/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

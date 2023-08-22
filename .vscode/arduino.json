@@ -2,5 +2,5 @@
     "board": "arduino:avr:uno",
     "programmer": "avrisp",
     "port": "COM4",
-    "sketch": "patterns\\patterns.ino"
+    "sketch": "fullon\\fullon.ino"
 }
