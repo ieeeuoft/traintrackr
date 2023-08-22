@@ -9,12 +9,17 @@
             ],
             "intelliSenseMode": "windows-gcc-x64",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "c:/Users/geoff/Documents/Arduino/libraries/**",
+                "C:/Program Files/WindowsApps/ArduinoLLC.ArduinoIDE_1.8.57.0_x86__mdqgnx93n4wtt/libraries/**",
+                "C:/Program Files/WindowsApps/ArduinoLLC.ArduinoIDE_1.8.57.0_x86__mdqgnx93n4wtt/hardware/**"
             ],
             "forcedInclude": [],
             "cStandard": "${default}",
             "cppStandard": "${default}",
-            "defines": []
+            "defines": [
+                "ARDUINO=10813"
+            ]
         },
         {
             "name": "Arduino",

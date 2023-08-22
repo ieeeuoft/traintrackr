@@ -1,6 +1,6 @@
 {
+    "port": "COM4",
     "board": "arduino:avr:uno",
     "programmer": "avrisp",
-    "port": "COM4",
-    "sketch": "fullon\\fullon.ino"
+    "sketch": "Arduino Practice\\fullon\\fullon.ino"
 }
