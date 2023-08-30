@@ -1,6 +1,7 @@
 {
-    "port": "COM4",
-    "board": "arduino:avr:uno",
+    "port": "COM7",
+    "board": "arduino:avr:nano",
     "programmer": "avrisp",
-    "sketch": "Arduino Practice\\fullon\\fullon.ino"
+    "sketch": "Arduino Practice\\patterns\\patterns.ino",
+    "configuration": "cpu=atmega328old"
 }

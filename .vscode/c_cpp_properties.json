@@ -32,7 +32,7 @@
             "intelliSenseMode": "gcc-x64",
             "includePath": [
                 "C:\\Users\\geoff\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
-                "C:\\Users\\geoff\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\standard",
+                "C:\\Users\\geoff\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\eightanaloginputs",
                 "C:\\Users\\geoff\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
                 "C:\\Users\\geoff\\Documents\\Arduino\\libraries\\Adafruit_GFX_Library",
                 "C:\\Users\\geoff\\Documents\\Arduino\\libraries\\Adafruit_BusIO",
@@ -50,7 +50,7 @@
             "defines": [
                 "F_CPU=16000000L",
                 "ARDUINO=10607",
-                "ARDUINO_AVR_UNO",
+                "ARDUINO_AVR_NANO",
                 "ARDUINO_ARCH_AVR",
                 "__DBL_MIN_EXP__=(-125)",
                 "__HQ_FBIT__=15",
