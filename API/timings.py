@@ -1,7 +1,6 @@
 exportTrainTimings = {
     "LWEB": {
-        "WRAL": 12,
-        "HCAL": 16,
+        "AL": 14,
         "BU": 7,
         "AP": 6,
         "BO": 5,
@@ -103,7 +102,7 @@ exportBoardNumberings = {
         "AP": 14,
         "BU": 11,
         "AL": 9,
-        "WH": 5,
+        "WR": 5,
         "HC": 1,
     }
 }

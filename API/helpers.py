@@ -8,10 +8,6 @@ def L_to_AC(L):
         A = "0" + str(A)
     
     return "A" + str(A) + "C" + str(C)
-
-def time_to_L(direction, station, timing=0):
-    trainTimings = exportTrainTimings[direction]
-    boardNumberings = exportBoardNumberings[direction]
     
 def time_to_next_stop(station):
     now = datetime.datetime.timestamp(datetime.datetime.now())
@@ -21,7 +17,6 @@ def time_to_next_stop(station):
     next_stop = station["departure"]["time"]
     diff = (next_stop - now) / 60
     return diff
-    # next_stop = datetime.datetime.fromtimestamp(station["departure"]["time"] + station["departure"]["delay"])
 
 def value_to_section(value, num_sections):
     adjusted_value = value * num_sections
@@ -39,25 +34,31 @@ def find_prev_station_boardNum(station, direction):
             return stationNum + i
     return None
 
-def station_to_section(station, direction):
+def stopped_at_station_to_section(station, direction): 
+    station_id = station["stop_id"]
+    if station_id == "SCTH":
+        return ""
+    return exportBoardNumberings[direction][station_id]
+
+def in_transit_station_to_section(station, direction):
     # first determine the percentage of the way from the previous station to the next station
     station_id = station["stop_id"]
     est_time_to_station = time_to_next_stop(station)
-    print("est_time_to_station", est_time_to_station)
+    # print("est_time_to_station", est_time_to_station)
     full_time_to_station = exportTrainTimings[direction][station_id]
-    print("full_time_to_station", full_time_to_station)
+    # print("full_time_to_station", full_time_to_station)
     value = min(max(0 , est_time_to_station/full_time_to_station), 1)
 
     # now determine the board number
     prev_station_boardNum = find_prev_station_boardNum(station_id, direction)
     current_station_boardNum = exportBoardNumberings[direction][station_id]
-    print(current_station_boardNum, prev_station_boardNum)
+    # print(current_station_boardNum, prev_station_boardNum)
     num_lights = prev_station_boardNum - current_station_boardNum - 1
-    print("num_lights", num_lights)
+    # print("num_lights", num_lights)
     relative_section = value_to_section(value, num_lights)
-    print("relative_section", relative_section)
+    # print("relative_section", relative_section)
 
     return current_station_boardNum + relative_section
 
-sample_station = {'stop_id': 'CL', 'arrival': None, 'departure': {'delay': 106, 'time': 1693349686, 'uncertainty': 0}, 'schedule_relationship': 'SCHEDULED'}
-print(station_to_section(sample_station, "LWWB"))
+# sample_station = {'stop_id': 'CL', 'arrival': None, 'departure': {'delay': 106, 'time': 1693349686, 'uncertainty': 0}, 'schedule_relationship': 'SCHEDULED'}
+# print(in_transit_station_to_section(sample_station, "LWWB"))

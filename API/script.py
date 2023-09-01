@@ -1,31 +1,73 @@
 import requests
 import datetime
-from helpers import time_to_L
-r = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/TripUpdates?key=30023457')
-v = r.json()["entity"]
-c = []
-# print(v[0]["trip_update"]["vehicle"])
-# for i in v:
-#     if i["trip_update"]["vehicle"]["label"][0:2] == "LW": 
-#       stops = i["trip_update"]["stop_time_update"]
-#       c.append(stops)
-#       print(i, end="\n\n")
-for i in v:
-    if i["trip_update"]["vehicle"]["label"][0:2] == "LW": 
-      first_stop = i["trip_update"]["stop_time_update"][0]
-      print(i)
-      time_to_L("LWWB", first_stop)
-      break
+import serial
 
-# for d in c:
-#   for stop in d:
-#     arrival_time = stop["departure"]["time"]
-#     arrival_time = datetime.datetime.fromtimestamp(arrival_time)
-#     stop["departure"]["time"] = arrival_time
-#     print(stop["stop_id"], arrival_time)
-#   print("\n\n")
+from helpers import stopped_at_station_to_section, L_to_AC, in_transit_station_to_section
 
+VehiclePosition = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/VehiclePosition?key=30023457')
+TripUpdates = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/TripUpdates?key=30023457')
+VehiclePosition = VehiclePosition.json()["entity"]
+TripUpdates = TripUpdates.json()["entity"]
+
+Combined_API_Response = []
+
+for trip in VehiclePosition:
+    id = trip["id"].split("-")
+    # east = 0
+    # west = 1
+    if id[1] == "LW" or id[1] == "LE":
+        direction_code = trip["vehicle"]["trip"]["direction_id"]
+        if direction_code == 0:
+          direction_code = id[1] + "EB"
+        else:
+          direction_code = id[1] + "WB"
+
+        Combined_API_Response.append({
+            "trip_num": id[2],
+            "status": trip["vehicle"]["current_status"],
+            "direction": direction_code,
+            "label": trip["vehicle"]["vehicle"]["label"],
+            #"vehicle": trip["vehicle"]["vehicle"],
+        })
+
+for trip in TripUpdates:
+    trip_num = trip["id"].split("-")[2]
+    for i in Combined_API_Response:
+        if i["trip_num"] == trip_num:
+            i["next_stop"] = trip["trip_update"]["stop_time_update"][0]
+
+send_to_serial = ""
+for trip in Combined_API_Response:
+  if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI":
+      continue
+  elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB":
+    light_section = stopped_at_station_to_section(trip["next_stop"], "LWEB")
+    send_to_serial +=  L_to_AC(light_section)
+  elif trip["status"] == "STOPPED_AT":
+    light_section = stopped_at_station_to_section(trip["next_stop"], trip["direction"])
+    send_to_serial +=  L_to_AC(light_section)
+  else:
+    light_section = in_transit_station_to_section(trip["next_stop"], trip["direction"])
+    send_to_serial +=  L_to_AC(light_section)
+
+
+print(send_to_serial)
+
+
+# sending shit
+try:
+    ser = serial.Serial(port="COM3", baudrate=9600, timeout=1)
+    ser.close()
+except serial.SerialException:
+    print('Cannot initialize serial communication.')
+    print('Is the device plugged in? \r\nIs the correct COM port chosen?')
+
+ser.open()
+
+ser.write(send_to_serial.encode())
+
+ser.close()
 ### matplotlib gui?
 ### use time stamp to compare
 ### output
-### AXXCXAXXCXAXXCX ;
+### AXXCXAXXCXAXXCX ; 
