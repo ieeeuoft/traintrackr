@@ -1,6 +1,7 @@
 import requests
 import datetime
 import serial
+import time
 
 from helpers import stopped_at_station_to_section, L_to_AC, in_transit_station_to_section
 
@@ -56,17 +57,24 @@ print(send_to_serial)
 
 # sending shit
 try:
-    ser = serial.Serial(port="COM3", baudrate=9600, timeout=1)
-    ser.close()
+    port = serial.Serial(port="COM4", baudrate=9600, timeout=1)
 except serial.SerialException:
     print('Cannot initialize serial communication.')
     print('Is the device plugged in? \r\nIs the correct COM port chosen?')
 
-ser.open()
+time.sleep(2)
+# Send the string
+port.write(send_to_serial.encode())  # Convert the string to bytes before sending
 
-ser.write(send_to_serial.encode())
+time.sleep(2)
 
-ser.close()
+response = port.readline().decode().strip()
+if response:
+    print("String sent successfully.", response)
+else:
+    print("String not sent or not acknowledged.")
+
+port.close()
 ### matplotlib gui?
 ### use time stamp to compare
 ### output
