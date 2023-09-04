@@ -1,4 +1,5 @@
 from timings import exportBoardNumberings, exportTrainTimings
+from all_trips import all_trips
 import datetime
 
 def L_to_AC(L):
@@ -40,17 +41,50 @@ def stopped_at_station_to_section(station, direction):
         return ""
     return exportBoardNumberings[direction][station_id]
 
-def in_transit_station_to_section(station, direction):
+def scheduled_full_time_between_stations(next_station_id, trip_id, direction):
+    all_trips_in_direction = all_trips[direction]
+    for trip in all_trips_in_direction:
+        if (trip_id == trip['Number']):
+            relevant_trip = trip
+            break
+    if not relevant_trip:
+        return None
+    for i in range(len(relevant_trip['Stops'])):
+        next_stop = relevant_trip['Stops'][i]
+        if (next_stop['Code']) == next_station_id:
+            previous_stop = relevant_trip['Stops'][i-1]
+            break
+    next_stop_time = next_stop['Time']
+    prev_stop_time = previous_stop['Time']
+    next_stop_time = datetime.datetime.strptime(next_stop_time,'%Y-%m-%d %H:%M:%S')
+    prev_stop_time = datetime.datetime.strptime(prev_stop_time,'%Y-%m-%d %H:%M:%S')
+    minutes_diff = (next_stop_time - prev_stop_time).total_seconds() / 60
+    prev_station_id = previous_stop['Code']
+
+    return {
+        "prev_station_id": prev_station_id,
+        "full_time": minutes_diff
+    }
+    
+
+def in_transit_station_to_section(station, direction, trip_id):
     # first determine the percentage of the way from the previous station to the next station
     station_id = station["stop_id"]
     est_time_to_station = time_to_next_stop(station)
     # print("est_time_to_station", est_time_to_station)
-    full_time_to_station = exportTrainTimings[direction][station_id]
+    real_previous_station = scheduled_full_time_between_stations(station['stop_id'], trip_id, direction)
+    
+    if real_previous_station:
+        full_time_to_station = real_previous_station['full_time']
+        previous_station_id = real_previous_station['prev_station_id']
+        prev_station_boardNum = exportBoardNumberings[direction][previous_station_id]
+    else: # edge case: the trip isn't on the schedule
+        full_time_to_station = exportTrainTimings[direction][station_id]
+        prev_station_boardNum = find_prev_station_boardNum(station_id, direction)
     # print("full_time_to_station", full_time_to_station)
     value = min(max(0 , est_time_to_station/full_time_to_station), 1)
 
     # now determine the board number
-    prev_station_boardNum = find_prev_station_boardNum(station_id, direction)
     current_station_boardNum = exportBoardNumberings[direction][station_id]
     # print(current_station_boardNum, prev_station_boardNum)
     num_lights = prev_station_boardNum - current_station_boardNum - 1

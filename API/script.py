@@ -5,7 +5,19 @@ import time
 
 from helpers import stopped_at_station_to_section, L_to_AC, in_transit_station_to_section
 
-def getPositions():
+def getAllTripsOnOneLine(today_date, line, direction):
+  alltrips = requests.get(f'http://api.openmetrolinx.com/OpenDataAPI/api/V1/Schedule/Line/{today_date}/{line}/{direction}?key=30023457')
+  return alltrips.json()["Lines"]["Line"][0]["Trip"]
+
+def getAllTripsOnLWLE(today_date):
+   return {
+      "LWWB": getAllTripsOnOneLine(today_date, "LW", "W"),
+      "LWEB": getAllTripsOnOneLine(today_date, "LW", "E"),
+      "LEWB": getAllTripsOnOneLine(today_date, "LE", "W"),
+      "LEEB": getAllTripsOnOneLine(today_date, "LE", "E")
+   }
+
+def fillDictionary():
   VehiclePosition = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/VehiclePosition?key=30023457')
   TripUpdates = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/TripUpdates?key=30023457')
   VehiclePosition = VehiclePosition.json()["entity"]
@@ -38,6 +50,9 @@ def getPositions():
           if i["trip_num"] == trip_num:
               i["next_stop"] = trip["trip_update"]["stop_time_update"][0]
 
+  return Combined_API_Response
+
+def getPositions(Combined_API_Response):
   send_to_serial = ""
   for trip in Combined_API_Response:
     if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI":
@@ -48,17 +63,18 @@ def getPositions():
       light_section = stopped_at_station_to_section(trip["next_stop"], trip["direction"])
       send_to_serial +=  L_to_AC(light_section)
     else:
-      light_section = in_transit_station_to_section(trip["next_stop"], trip["direction"])
+      light_section = in_transit_station_to_section(trip["next_stop"], trip["direction"], trip["trip_num"])
       send_to_serial +=  L_to_AC(light_section)
   return send_to_serial
 
-print(getPositions())
-try:
-    port = serial.Serial(port="COM4", baudrate=9600, timeout=1)
-except serial.SerialException:
-    print('Cannot initialize serial communication.')
-    print('Is the device plugged in? \r\nIs the correct COM port chosen?')
-# sending shit
+def setupCOM():
+  try:
+      port = serial.Serial(port="COM4", baudrate=9600, timeout=1)
+  except serial.SerialException:
+      print('Cannot initialize serial communication.')
+      print('Is the device plugged in? \r\nIs the correct COM port chosen?')
+  return port
+
 def send_to_arduino(string_to_send):
   time.sleep(2)
   # Send the string
@@ -71,15 +87,18 @@ def send_to_arduino(string_to_send):
     print("String not sent or not acknowledged.")
 
 try:
-   while True:
+  while True:
     print("hi")
-    positions = getPositions()
+    API_Dictionary = fillDictionary()
+    positions = getPositions(API_Dictionary)
+    print(positions)
+    port = setupCOM()
     send_to_arduino(positions)
     time.sleep(30)
 except KeyboardInterrupt:
-   print("byebye")
-   port.close()
-      
+  print("byebye")
+  port.close()
+
 ### matplotlib gui?
 ### use time stamp to compare
 ### output
