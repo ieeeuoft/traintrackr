@@ -13,10 +13,11 @@ uint8_t counter = 0;
 uint16_t delayTime = 500;
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("another test");
-  
+  Serial.begin(9600);  
   matrix.begin(0x70);  // pass in the address
+
+  pinMode(3, OUTPUT);   //digital pin 3 = MCU STATUS
+  analogWrite(3, 20);
 }
 
 void loop() {

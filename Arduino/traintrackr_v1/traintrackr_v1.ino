@@ -15,9 +15,12 @@ int firstTimer = 0;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("another test");
-  
   matrix.begin(0x70);  // pass in the address
+  Serial.println("Arduino on");
+  pinMode(2, OUTPUT);   //digital pin 2 = API CONN
+  pinMode(3, OUTPUT);   //digital pin 3 = MCU STATUS
+  analogWrite(3, 20);   //PWM to reduce brightness
+  digitalWrite(2, LOW);
 }
 
 void loop() {
@@ -34,6 +37,7 @@ void loop() {
     }
 
     String received = Serial.readStringUntil('\n');
+    digitalWrite(2, HIGH);
     int a;
     int c;
 
@@ -46,5 +50,6 @@ void loop() {
     matrix.writeDisplay();
     Serial.println("Received and Board Lit");
     Serial.flush();
+    digitalWrite(2, LOW);
   }
 }
