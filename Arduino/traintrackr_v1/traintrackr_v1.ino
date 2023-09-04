@@ -28,6 +28,11 @@ void loop() {
  
   
   if (Serial.available() > 0) {
+    //first clear everything
+    for (uint8_t c=0; c<8; c++){
+        matrix.displaybuffer[c] = 0;
+    }
+
     String received = Serial.readStringUntil('\n');
     int a;
     int c;
@@ -36,7 +41,7 @@ void loop() {
     for (int i = 0; i < upper_limit; i++){
       a = (received[i * 5 + 1] - 48) * 10 + (received[i * 5 + 2] - 48);
       c = received[i * 5 + 4] - 48;
-      matrix.displaybuffer[c] = (1 << a);
+      matrix.displaybuffer[c] |= (1 << a);
     }
     matrix.writeDisplay();
     Serial.println("Received and Board Lit");
