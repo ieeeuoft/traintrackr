@@ -80,7 +80,8 @@ try:
    while True:
     print("hi")
     positions = getPositions()
-    time.sleep(5)
+    send_to_arduino(positions)
+    time.sleep(30)
 except KeyboardInterrupt:
    print("byebye")
       
