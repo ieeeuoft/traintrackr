@@ -1,0 +1,13 @@
+Bug Report:
+- Express trains (trip 1961) was read, but spotty - sometimes the lights turn on, sometimes they don't, sometimes it skips stops, etc.
+- Trains waiting as West Harbour going E/B are shown 1 LED past West Harbour
+- Python code bugged at around 9:50 am - vehicle 648 was being tracked but looks like it was deadheading - it didn't have a next stop or a schedule so code threw an exception - error message:
+
+	Traceback (most recent call last):
+		File ..., line 76 in <module>
+			positions = getPositions()
+		File ... , line 43, in getPositions
+			if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI";
+		KeyError: 'next_stop'
+
+- West Harbour E/B light doesn't seem to be programmed correctly - doesn't turn on (though is functional)
