@@ -11,6 +11,7 @@ Adafruit_LEDBackpack matrix = Adafruit_LEDBackpack();
 
 uint8_t counter = 0;
 uint16_t delayTime = 200;
+int firstTimer = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -20,5 +21,29 @@ void setup() {
 }
 
 void loop() {
+    // matrix.displaybuffer[3] = (1<<0);
+    // squarebracket = row (C), leftshift = col (A)
+
+  String received = "A00C1A00C2A00C3A00C0A01C0";
+ 
+  
+  // if (Serial.available() > 0) {
+    // String received = Serial.readStringUntil('\n');
+  int a;
+  int c;
+
+  int upper_limit = received.length() / 5;
+  for (int i = 0; i < upper_limit; i++){
+      a = (received[i * 5 + 1] - 48) * 10 + (received[i * 5 + 2] - 48);
+      if (firstTimer < 5) {
+        Serial.println(a);
+        firstTimer++;
+      }
+      c = received[i * 5 + 4] - 48;
+      matrix.displaybuffer[c] = (1 << a);
+    }
+    matrix.writeDisplay();
     
+    // Serial.flush();
+  // }
 }
