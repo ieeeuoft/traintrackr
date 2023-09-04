@@ -53,28 +53,22 @@ def getPositions():
   return send_to_serial
 
 print(getPositions())
-
-# sending shit
-def send_to_arduino(string_to_send):
-  try:
+try:
     port = serial.Serial(port="COM4", baudrate=9600, timeout=1)
-  except serial.SerialException:
+except serial.SerialException:
     print('Cannot initialize serial communication.')
     print('Is the device plugged in? \r\nIs the correct COM port chosen?')
-
+# sending shit
+def send_to_arduino(string_to_send):
   time.sleep(2)
   # Send the string
   port.write(string_to_send.encode())  # Convert the string to bytes before sending
-
   time.sleep(2)
-
   response = port.readline().decode().strip()
   if response:
     print("String sent successfully.", response)
   else:
     print("String not sent or not acknowledged.")
-
-  port.close()
 
 try:
    while True:
@@ -84,6 +78,7 @@ try:
     time.sleep(30)
 except KeyboardInterrupt:
    print("byebye")
+   port.close()
       
 ### matplotlib gui?
 ### use time stamp to compare
