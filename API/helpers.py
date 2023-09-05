@@ -43,6 +43,7 @@ def stopped_at_station_to_section(station, direction):
 
 def scheduled_full_time_between_stations(next_station_id, trip_id, direction):
     all_trips_in_direction = all_trips[direction]
+    relevant_trip = None
     for trip in all_trips_in_direction:
         if (trip_id == trip['Number']):
             relevant_trip = trip
