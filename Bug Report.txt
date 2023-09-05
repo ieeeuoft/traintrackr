@@ -1,3 +1,4 @@
 Bug Report:
 - LED mapping on LW w/b between Aldershot and West Harbour is inaccurate - train between those two stations light up the wrong LEDs (still shown however)
 - At one point a train at Exhibition GO was shown to be both at Exhibition and between Exhibition and Union
+- Issue with express train at 9:28am - seemed to be lagging behind actual location when between Long Branch and Port Credit - next update jumped from Long Branch (past by 1) to Port Credit, skipping LEDs in the middle
