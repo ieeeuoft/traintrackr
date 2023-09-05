@@ -16,6 +16,7 @@ def time_to_next_stop(station):
     # From the trip updates API return
 
     next_stop = station["departure"]["time"]
+    
     diff = (next_stop - now) / 60
     return diff
 
@@ -88,11 +89,18 @@ def in_transit_station_to_section(station, direction, trip_id):
     # now determine the board number
     current_station_boardNum = exportBoardNumberings[direction][station_id]
     # print(current_station_boardNum, prev_station_boardNum)
+    
     num_lights = prev_station_boardNum - current_station_boardNum - 1
     # print("num_lights", num_lights)
+    
     relative_section = value_to_section(value, num_lights)
     # print("relative_section", relative_section)
-
+    if station_id == "WR":
+        print("WR", value, relative_section, current_station_boardNum, prev_station_boardNum, num_lights, est_time_to_station, full_time_to_station)
+    if station_id == "AL" and previous_station_id == "HC": # Edge case: LW train going eastbound to Aldershot
+        return 124 + value_to_section(value, 3)
+    if station_id == "HC": # Edge case: LW train going westbound to Hamilton Center
+        return 1 + value_to_section(value, 3)
     return current_station_boardNum + relative_section
 
 # sample_station = {'stop_id': 'CL', 'arrival': None, 'departure': {'delay': 106, 'time': 1693349686, 'uncertainty': 0}, 'schedule_relationship': 'SCHEDULED'}

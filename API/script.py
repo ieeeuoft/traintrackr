@@ -69,7 +69,7 @@ def getPositions(Combined_API_Response):
 
 def setupCOM():
   try:
-      port = serial.Serial(port="COM7", baudrate=9600, timeout=1)
+      port = serial.Serial(port="COM3", baudrate=9600, timeout=1)
   except serial.SerialException:
       print('Cannot initialize serial communication.')
       print('Is the device plugged in? \r\nIs the correct COM port chosen?')
@@ -85,21 +85,21 @@ def send_to_arduino(string_to_send):
     print("String sent successfully.", response)
   else:
     print("String not sent or not acknowledged.")
+def main(to_arduino=True):
+  try:
+    if to_arduino:
+      port = setupCOM()
+    while True:
+      print("hi")
+      API_Dictionary = fillDictionary()
+      positions = getPositions(API_Dictionary)
+      print(positions)
+      if to_arduino:
+        send_to_arduino(positions)
+      time.sleep(30)
+  except KeyboardInterrupt:
+    print("byebye")
+    if to_arduino:
+      port.close()
 
-try:
-  port = setupCOM()
-  while True:
-    print("hi")
-    API_Dictionary = fillDictionary()
-    positions = getPositions(API_Dictionary)
-    print(positions)
-    send_to_arduino(positions)
-    time.sleep(30)
-except KeyboardInterrupt:
-  print("byebye")
-  port.close()
-
-### matplotlib gui?
-### use time stamp to compare
-### output
-### AXXCXAXXCXAXXCX ; 
+main(to_arduino=True) # set this to false when testing
