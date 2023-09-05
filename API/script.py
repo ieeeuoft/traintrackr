@@ -40,7 +40,6 @@ def fillDictionary():
               "status": trip["vehicle"]["current_status"],
               "direction": direction_code,
               "label": trip["vehicle"]["vehicle"]["label"],
-              #"vehicle": trip["vehicle"]["vehicle"],
           })
 
   for trip in TripUpdates:
@@ -54,15 +53,16 @@ def fillDictionary():
 def getPositions(Combined_API_Response):
   send_to_serial = ""
   for trip in Combined_API_Response:
-    if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI":
+    if not trip.get("next_stop"): #deadheading trains
+       continue
+    if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI": #trains heading to niagara falls
       continue
-    elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB":
-      light_section = stopped_at_station_to_section(trip["next_stop"], "LWEB")
-      send_to_serial +=  L_to_AC(light_section)
-    elif trip["status"] == "STOPPED_AT":
+    elif trip["status"] == "STOPPED_AT": #trains that are stoppe at a station
       light_section = stopped_at_station_to_section(trip["next_stop"], trip["direction"])
       send_to_serial +=  L_to_AC(light_section)
-    else:
+    elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB": #trains coming towards west harbor
+      continue
+    else: #all other trains
       light_section = in_transit_station_to_section(trip["next_stop"], trip["direction"], trip["trip_num"])
       send_to_serial +=  L_to_AC(light_section)
   return send_to_serial
