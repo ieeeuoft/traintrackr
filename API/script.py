@@ -57,7 +57,8 @@ def getPositions(Combined_API_Response):
     if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI":
       continue
     elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB":
-      continue
+      light_section = stopped_at_station_to_section(trip["next_stop"], "LWEB")
+      send_to_serial +=  L_to_AC(light_section)
     elif trip["status"] == "STOPPED_AT":
       light_section = stopped_at_station_to_section(trip["next_stop"], trip["direction"])
       send_to_serial +=  L_to_AC(light_section)
@@ -86,12 +87,12 @@ def send_to_arduino(string_to_send):
     print("String not sent or not acknowledged.")
 
 try:
+  port = setupCOM()
   while True:
     print("hi")
     API_Dictionary = fillDictionary()
     positions = getPositions(API_Dictionary)
     print(positions)
-    port = setupCOM()
     send_to_arduino(positions)
     time.sleep(30)
 except KeyboardInterrupt:

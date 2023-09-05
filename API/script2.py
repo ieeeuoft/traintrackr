@@ -1,8 +1,8 @@
 import datetime
 import requests
-# r = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/VehiclePosition?key=30023457')
-r = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Schedule/Line/20230904/LW/E?key=30023457')
-alltrips = r.json()["Lines"]["Line"][0]["Trip"]
+r = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Gtfs/Feed/VehiclePosition?key=30023457')
+# r = requests.get('http://api.openmetrolinx.com/OpenDataAPI/api/V1/Schedule/Line/20230904/LW/E?key=30023457')
+alltrips = r.json()["entity"]#["Lines"]["Line"][0]["Trip"]
 
 
 def main():
@@ -21,7 +21,8 @@ def main2():
   for trips in alltrips:
     print(trips, end="\n\n")
 
-main2()
+for trip in alltrips:
+  print(trip)
 # v = r.json()["entity"]
 # c = []
 # for i in v:
