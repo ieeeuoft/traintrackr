@@ -19,7 +19,7 @@ void setup() {
   Serial.println("Arduino on");
   pinMode(2, OUTPUT);   //digital pin 2 = API CONN
   pinMode(3, OUTPUT);   //digital pin 3 = MCU STATUS
-  analogWrite(3, 20);   //PWM to reduce brightness
+  analogWrite(3, 10);   //PWM to reduce brightness
   digitalWrite(2, LOW);
 }
 

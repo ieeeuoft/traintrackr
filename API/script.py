@@ -69,7 +69,7 @@ def getPositions(Combined_API_Response):
 
 def setupCOM():
   try:
-      port = serial.Serial(port="COM4", baudrate=9600, timeout=1)
+      port = serial.Serial(port="COM7", baudrate=9600, timeout=1)
   except serial.SerialException:
       print('Cannot initialize serial communication.')
       print('Is the device plugged in? \r\nIs the correct COM port chosen?')
