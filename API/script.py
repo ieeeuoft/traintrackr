@@ -68,7 +68,7 @@ def getPositions(Combined_API_Response):
 
 def setupCOM():
   try:
-      port = serial.Serial(port="COM4", baudrate=9600, timeout=1)
+      port = serial.Serial(port="COM7", baudrate=9600, timeout=1)
   except serial.SerialException:
       print('Cannot initialize serial communication.')
       print('Is the device plugged in? \r\nIs the correct COM port chosen?')
@@ -86,12 +86,12 @@ def send_to_arduino(string_to_send):
     print("String not sent or not acknowledged.")
 
 try:
+  port = setupCOM()
   while True:
     print("hi")
     API_Dictionary = fillDictionary()
     positions = getPositions(API_Dictionary)
     print(positions)
-    port = setupCOM()
     send_to_arduino(positions)
     time.sleep(30)
 except KeyboardInterrupt:
