@@ -72,11 +72,7 @@ def getPositions(Combined_API_Response):
   return send_to_serial, num_of_trains
 
 def setupCOM():
-  try:
-      port = serial.Serial(port="COM3", baudrate=9600, timeout=1)
-  except serial.SerialException:
-      print('Cannot initialize serial communication.')
-      print('Is the device plugged in? \r\nIs the correct COM port chosen?')
+  port = serial.Serial(port="COM3", baudrate=9600, timeout=1)
   return port
 
 def send_to_arduino(string_to_send, port):
@@ -109,5 +105,7 @@ def main(to_arduino=True):
     print("byebye")
     if to_arduino:
       port.close()
+  except Exception as e:
+     print(f"Error occured! {e}")
 
 main(to_arduino=False) # set this to false when testing

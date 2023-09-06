@@ -15,6 +15,7 @@ def getAllTripsOnLWLE(today_date):
 
 
 def getAllTrips():
+   print("No schedule file found, making new one...")
    today = datetime.date.today()
 
    all_trips = getAllTripsOnLWLE(today.strftime('%Y%m%d'))
