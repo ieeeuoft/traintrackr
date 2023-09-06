@@ -1,6 +1,7 @@
 from timings import exportBoardNumberings, exportTrainTimings
-from all_trips import all_trips
+import json
 import datetime
+from all_trips import getAllTrips
 
 def L_to_AC(L):
     C = (L - 1) // 16 
@@ -42,7 +43,18 @@ def stopped_at_station_to_section(station, direction):
         return ""
     return exportBoardNumberings[direction][station_id]
 
+def get_all_scheduled_trips_today():
+    all_trips = None
+    while not all_trips:
+        try:
+            with open(f"{datetime.date.today().strftime('%Y%m%d')} - Scheduled Trains",'r') as openfile:
+                all_trips = json.load(openfile)
+                return all_trips
+        except:
+            getAllTrips()
+
 def scheduled_full_time_between_stations(next_station_id, trip_id, direction):
+    all_trips = get_all_scheduled_trips_today()
     all_trips_in_direction = all_trips[direction]
     relevant_trip = None
     for trip in all_trips_in_direction:
@@ -50,6 +62,7 @@ def scheduled_full_time_between_stations(next_station_id, trip_id, direction):
             relevant_trip = trip
             break
     if not relevant_trip:
+        print("Unscheduled Trip")
         return None
     for i in range(len(relevant_trip['Stops'])):
         next_stop = relevant_trip['Stops'][i]
@@ -95,11 +108,9 @@ def in_transit_station_to_section(station, direction, trip_id):
     
     relative_section = value_to_section(value, num_lights)
     # print("relative_section", relative_section)
-    if station_id == "WR":
-        print("WR", value, relative_section, current_station_boardNum, prev_station_boardNum, num_lights, est_time_to_station, full_time_to_station)
-    if station_id == "AL" and previous_station_id == "HC": # Edge case: LW train going eastbound to Aldershot
+    if station_id == "AL" and previous_station_id == "HA": # Edge case: LW train going eastbound to Aldershot
         return 124 + value_to_section(value, 3)
-    if station_id == "HC": # Edge case: LW train going westbound to Hamilton Center
+    if station_id == "HA": # Edge case: LW train going westbound to Hamilton Center
         return 1 + value_to_section(value, 3)
     return current_station_boardNum + relative_section
 

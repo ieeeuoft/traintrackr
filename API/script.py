@@ -1,6 +1,7 @@
 import requests
 import serial
 import time
+import datetime
 
 from helpers import stopped_at_station_to_section, L_to_AC, in_transit_station_to_section
 
@@ -53,14 +54,15 @@ def fillDictionary():
 def getPositions(Combined_API_Response):
   send_to_serial = ""
   for trip in Combined_API_Response:
-    if not trip.get("next_stop"): #deadheading trains
-       continue
-    if trip["next_stop"]["stop_id"] == "SCTH" or trip["next_stop"]["stop_id"] == "NI": #trains heading to niagara falls
-      continue
+    if trip.get("next_stop") and trip["next_stop"]["stop_id"] in ["SCTH", "NI"]: # edge case: trains on the niagara portion of LW
+       continue    
     elif trip["status"] == "STOPPED_AT": #trains that are stoppe at a station
       light_section = stopped_at_station_to_section(trip["next_stop"], trip["direction"])
       send_to_serial +=  L_to_AC(light_section)
-    elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB": #trains coming towards west harbor
+    elif not trip.get("next_stop"): #deadheading trains
+       # TODO: edge case for trains that are stopped at its destination
+       continue
+    elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB": #trains coming towards west harbor on the niagara portion
       continue
     else: #all other trains
       light_section = in_transit_station_to_section(trip["next_stop"], trip["direction"], trip["trip_num"])
@@ -75,7 +77,7 @@ def setupCOM():
       print('Is the device plugged in? \r\nIs the correct COM port chosen?')
   return port
 
-def send_to_arduino(string_to_send):
+def send_to_arduino(string_to_send, port):
   time.sleep(2)
   # Send the string
   port.write(string_to_send.encode())  # Convert the string to bytes before sending
@@ -90,16 +92,20 @@ def main(to_arduino=True):
     if to_arduino:
       port = setupCOM()
     while True:
-      print("hi")
+      print("Fetching from server...")
+      start_time = datetime.datetime.now()
       API_Dictionary = fillDictionary()
       positions = getPositions(API_Dictionary)
       print(positions)
       if to_arduino:
-        send_to_arduino(positions)
-      time.sleep(30)
+        send_to_arduino(positions, port)
+      time_diff = datetime.datetime.now() - start_time
+      print(f"Fetched in {time_diff.total_seconds()} seconds. ", end="")
+      print("Time Now: " + datetime.datetime.now().strftime('%H:%M:%S'), end="\n\n")
+      time.sleep(10)
   except KeyboardInterrupt:
     print("byebye")
     if to_arduino:
       port.close()
 
-main(to_arduino=True) # set this to false when testing
+main(to_arduino=False) # set this to false when testing

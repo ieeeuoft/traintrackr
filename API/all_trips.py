@@ -1,5 +1,6 @@
 import requests
 import datetime
+import json
 def getAllTripsOnOneLine(today_date, line, direction):
   alltrips = requests.get(f'http://api.openmetrolinx.com/OpenDataAPI/api/V1/Schedule/Line/{today_date}/{line}/{direction}?key=30023457')
   return alltrips.json()["Lines"]["Line"][0]["Trip"]
@@ -13,7 +14,10 @@ def getAllTripsOnLWLE(today_date):
    }
 
 
+def getAllTrips():
+   today = datetime.date.today()
 
-today = datetime.date.today()
+   all_trips = getAllTripsOnLWLE(today.strftime('%Y%m%d'))
 
-all_trips = getAllTripsOnLWLE(today.strftime('%Y%m%d'))
+   with open(f"{today.strftime('%Y%m%d')} - Scheduled Trains", "w") as outfile:
+      outfile.write(json.dumps(all_trips, indent=4))

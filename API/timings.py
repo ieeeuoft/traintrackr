@@ -35,7 +35,7 @@ exportTrainTimings = {
         "BU": 6,
         "AL": 8,
         "WR": 14,
-        "HC": 13
+        "HA": 13
     },
     "LEEB": {
         "DA": 11,
@@ -52,7 +52,7 @@ exportTrainTimings = {
 
 exportBoardNumberings = {
     "LWEB": {
-        "HC": 128,
+        "HA": 128,
         "WR": 124, 
         "AL": 120,
         "BU": 118,
@@ -103,6 +103,6 @@ exportBoardNumberings = {
         "BU": 11,
         "AL": 9,
         "WR": 5,
-        "HC": 1,
+        "HA": 1,
     }
 }
