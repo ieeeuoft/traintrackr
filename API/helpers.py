@@ -4,6 +4,8 @@ import datetime
 from all_trips import getAllTrips
 
 def L_to_AC(L):
+    if not L:
+        return ""
     C = (L - 1) // 16 
     A = (L - 1) % 16
     if A < 10:
@@ -92,6 +94,8 @@ def in_transit_station_to_section(station, direction, trip_id):
     if real_previous_station:
         full_time_to_station = real_previous_station['full_time']
         previous_station_id = real_previous_station['prev_station_id']
+        if previous_station_id == "SCTH":
+            return None
         prev_station_boardNum = exportBoardNumberings[direction][previous_station_id]
     else: # edge case: the trip isn't on the schedule
         full_time_to_station = exportTrainTimings[direction][station_id]

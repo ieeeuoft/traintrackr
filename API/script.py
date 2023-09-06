@@ -55,7 +55,7 @@ def getPositions(Combined_API_Response):
   send_to_serial = ""
   num_of_trains = 0
   for trip in Combined_API_Response:
-    if trip.get("next_stop") and trip["next_stop"]["stop_id"] in ["SCTH", "NI"]: # edge case: trains on the niagara portion of LW
+    if trip.get("next_stop") and trip["next_stop"].get("stop_id") in ["SCTH", "NI"]: # edge case: trains on the niagara portion of LW
        continue    
     elif trip["status"] == "STOPPED_AT": #trains that are stopped at a station
       light_section = stopped_at_station_to_section(trip["next_stop"], trip["direction"])
@@ -63,8 +63,6 @@ def getPositions(Combined_API_Response):
       num_of_trains += 1
     elif not trip.get("next_stop"): #deadheading trains
        continue
-    elif trip["next_stop"]["stop_id"] == "WR" and trip["direction"] == "LWEB": #trains coming towards west harbor on the niagara portion
-      continue
     else: #all other trains
       light_section = in_transit_station_to_section(trip["next_stop"], trip["direction"], trip["trip_num"])
       send_to_serial +=  L_to_AC(light_section)
@@ -98,14 +96,15 @@ def main(to_arduino=True):
       if to_arduino:
         send_to_arduino(positions, port)
       time_diff = datetime.datetime.now() - start_time
-      print(f"Fetched in {time_diff.total_seconds()} seconds. ", end="")
+      print(f"Fetched & Sent to Arduino in {time_diff.total_seconds()} seconds. ", end="")
       print("Time Now: " + datetime.datetime.now().strftime('%H:%M:%S'), end="\n\n")
       time.sleep(10)
   except KeyboardInterrupt:
     print("byebye")
-    if to_arduino:
-      port.close()
   except Exception as e:
      print(f"Error occured! {e}")
+  finally:
+     if to_arduino:
+      port.close()
 
-main(to_arduino=False) # set this to false when testing
+main(to_arduino=True) # set this to false when testing
