@@ -98,7 +98,7 @@ def main(to_arduino=True):
       time_diff = datetime.datetime.now() - start_time
       print(f"Fetched & Sent to Arduino in {time_diff.total_seconds()} seconds. ", end="")
       print("Time Now: " + datetime.datetime.now().strftime('%H:%M:%S'), end="\n\n")
-      time.sleep(10)
+      time.sleep(30)
   except KeyboardInterrupt:
     print("byebye")
   except Exception as e:
