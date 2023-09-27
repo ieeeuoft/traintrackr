@@ -28,4 +28,4 @@ Geoffrey Fang was the project manager and the lead designer of the project from 
 
 Scott Hirano focused on the development of the backend Python scripts and provided constant liason with UofT IEEE Student Branch leads. 
 
-![completed build](./images/4.jpg)
+![completed build](./images/4-board.jpg)
