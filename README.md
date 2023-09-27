@@ -19,7 +19,7 @@ This project was developed with the support of the University of Toronto IEEE St
 
 The PCB was designed in Altium Designer, and manufactured by JLCPCB. 
 ![altium](./images/2.PNG)
-![manufactured board](./images/3.jpg)
+![manufactured board](./images/3-board.jpg)
 
 The electrical components were sourced from Digikey and Creatron. 
 ## Acknowledgements
