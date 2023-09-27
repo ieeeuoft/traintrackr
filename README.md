@@ -18,7 +18,7 @@ Watch the board in action here:
 This project was developed with the support of the University of Toronto IEEE Student Branch over Summer 2023 as a project to demonstrate the technical capabilities of the Tech Team at IEEE. The project was displayed at several club fairs during Frosh Week at the University of Toronto.
 
 The PCB was designed in Altium Designer, and manufactured by JLCPCB. 
-![altium](./images/2.jpg)
+![altium](./images/2.png)
 ![manufactured board](./images/3.jpg)
 
 The electrical components were sourced from Digikey and Creatron. 
